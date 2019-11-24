@@ -131,7 +131,7 @@ import { AppModule } from "./app/app.module";
 platformBrowserDynamic().bootstrapModule(AppModule);
 ```  
 - And in the app.module.ts file, that contains a list of components ```bootstrap: [AppComponent]```to use as the starting component.  
-***app.module.ts file*** -  
+***app.module.ts file*** -
 ```JavaScript
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
@@ -145,7 +145,7 @@ import { AppComponent } from "./app.component";
 export class AppModule {}
 ```
 - In the components file (app.components.ts), Angular will use the selector property ```selector: "app-root",``` from the component metadata to find a match in the DOM (index.html), based on an element name ```<app-root></app-root>```.  
-***app.component.ts*** -  
+***app.component.ts*** -
 ```JavaScript
 import { Component } from "@angular/core";
 
