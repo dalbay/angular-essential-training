@@ -5,7 +5,7 @@ _Building a media watch list application_
 - Parts that you use to write applications in Angular:
   ![ANGULAR components](/images/angular1.png)
 
-## Components
+## COMPONENTS
 
 - Angular is built upon **_components_**.
 - The starting point of an Angular app is the bootstrapping(like the HTML DOM tree) - Angular runs on a component tree model.
@@ -81,12 +81,14 @@ import { AppComponent } from "./app.component";
 ### Component metadata
 
 - Building the first component, the app component. app -> app.component.ts
-- To build an angular component, you need to use the **_component decorator_** on a class. The component decorator comes from the core scope package in angular. Import it and call the decorator, using the app component syntax with the parentheses. Then, we need to export a class for the component. We will name this class 'AppComponent'.
-
-- The component decorator takes in a metadata object with some known properties to configure the class you decorate as an angular component.
-  To decorate a component, you need to provide two metadata properties at a minimum.
-- **Selector** - is what angular will use to locate a custom html element and apply the component to.
-- **Template** or **template url** - Angular will use the template property content to fill the inner html of the targeted custom element when it processes it.
+- To build an angular component:
+  - use the **_component decorator_** which comes from the core scope package in angular;
+  - import the component and call the decorator, using the app component syntax with the parentheses.
+  - export a class for the component.  
+- The component decorator takes in a ***metadata object*** with some known properties to configure the class you decorate as an angular component.
+- To decorate a component, you need to provide two metadata properties at a minimum.
+  - **Selector** - is what angular will use to locate a custom html element and apply the component to.
+  - **Template** or **template url** - Angular will use the template property content to fill the inner html of the targeted custom element when it processes it.
 
 ```JavaScript
 import { Component } from "@angular/core";
@@ -96,9 +98,30 @@ import { Component } from "@angular/core";
   template: "<h1>MyApp</h1>"
 })
 export class AppComponent {}
-```
+```  
+<br/>
 
-### Directives and Pipes
+### Bootstrapping the module for the browser
+- After creating a root module and a starting component, Bootstrap the module.
+- Put the bootstrap logic in a separate file - Main.ts in the app folder.
+Angular has support for running on multiple platforms. For this app we are targeting the browser so we need to bootstrap for that platform. 
+- Angular exports a function named ***Platform Browser Dynamic*** that can be used for targeting the browser and that comes from the platform-Browser-Dynamic scope package. So we can import the platform-Browser-Dynamic function from there.
+```JavaScript
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+```  
+- This function returns a platform object that has a bootstrap module function on it. That is the function you will use to bootstrap your root module on the platform.  
+This function is expecting a root module and we have one already created from earlier named App Module import it and pass the app module type into the bootstrap module function call.
+ ```JavaScript
+import { AppModule } from './app/app.module';
+
+platformBrowserDynamic().bootstrapModule(AppModule);
+ ```  
+- And with that we have all the initial starting bits written to get this Angular app up and running in the browser. 
+![Angular app](images/angular10.png)
+<br/>  
+
+
+## DIRECTIVES and PIPES
 
 #### Component
 
