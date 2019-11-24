@@ -120,12 +120,46 @@ platformBrowserDynamic().bootstrapModule(AppModule);
 ![Angular app](images/angular10.png)
 <br/>  
 
-###  The component selector  
-- Angular kicks off with the bootstrap call in the main.ts file, that takes in an Angular root module ```platformBrowserDynamic().bootstrapModule(AppModule);```.
+###  The Component Selector  
+***Recap:***  
+- Angular kicks off with the bootstrap call in the main.ts file, that takes in an Angular root module ```platformBrowserDynamic().bootstrapModule(AppModule);```.  
+***main.ts file*** -
+```JavaScript
+import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
+import { AppModule } from "./app/app.module";
+
+platformBrowserDynamic().bootstrapModule(AppModule);
+```  
 - And in the app.module.ts file, that contains a list of components ```bootstrap: [AppComponent]```to use as the starting component.  
-- In the components file (app.components.ts), Angular will use the selector property ```selector: "app-root",``` from the component metadata to find a match in the DOM (index.html), based on an element name ```<app-root></app-root>```. 
+***app.module.ts file*** -  
+```JavaScript
+import { NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
+import { AppComponent } from "./app.component";
+
+@NgModule({
+  imports: [BrowserModule],
+  declarations: [AppComponent],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+```
+- In the components file (app.components.ts), Angular will use the selector property ```selector: "app-root",``` from the component metadata to find a match in the DOM (index.html), based on an element name ```<app-root></app-root>```.  
+***app.component.ts*** -  
+```JavaScript
+import { Component } from "@angular/core";
+
+@Component({
+  selector: "app-root",
+  template: "<h1>MyApp</h1>"
+})
+export class AppComponent {}
+```  
 - Angular will bootstrap the AppComponent to that element.
-The W3C spec states that custom DOM elements should use at least one dash in their names. 
+The W3C spec states that custom DOM elements should use at least one dash in their names.  
+<br/>
+
+
 
 ## DIRECTIVES and PIPES
 
