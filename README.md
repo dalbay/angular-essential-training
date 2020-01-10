@@ -1,7 +1,5 @@
 # ANGULAR
 
-_Building a media watch list application_
-
 - Parts that you use to write applications in Angular:
   ![ANGULAR components](/images/angular1.png)
 
