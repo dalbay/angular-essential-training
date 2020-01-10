@@ -78,7 +78,7 @@ import { AppComponent } from "./app.component";
 
 ### Component metadata
 
-- Building the first component, the app component. app -> app.component.ts
+- Building the first component (the app component). app -> app.component.ts
 - To build an angular component:
   - use the **_component decorator_** which comes from the core scope package in angular;
   - import the component and call the decorator, using the app component syntax with the parentheses.
