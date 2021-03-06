@@ -25,11 +25,12 @@
 ### NgModule and the Root Module
 
 - Angular leverages **_decorators_** to help configure code like classes, methods, and fields.
-- TypeScript provides support for decorators through its transpiler. The syntax for using a decorator is the At symbol, followed by the decorator name, and then a pair of parentheses. `@Component()`
-  NgModule and the root module
+- TypeScript provides support for decorators through its transpiler. The syntax for using a decorator is:  
+  the @ symbol, followed by the decorator name, and then a pair of parentheses. -> `@Component()`  
 - An Angular application starts with an **_Angular module_**, which gets configured using a decorator. An Angular modules help to keep application code organized by blocks of functionality and features.
-- A **_root module_** acts as the starting point module for an Angular application.  
+- A **_root module_** acts as the starting point module for an Angular application.   
   Create the root module class in a file named app.module.ts, that is in the Source/App folder of the project.  
+  ![ANGULAR components img 2](/images/appmodulets.png)    
   Use a decorator to annotate that class so Angular will know it's an Angular module - **_`NgModule` decorator_**; import it using the module loading syntax that TypeScript supports. The NgModule decorator comes from the core scoped package in Angular.
 
 ```JavaScript
