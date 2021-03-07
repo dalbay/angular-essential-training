@@ -232,10 +232,36 @@ the ```[mediaItem]```, which is the Input property from the MediaItemComponent, 
 - Now, if we flip over to the media-item-component.hmtl file, we can replace the static Name, Watched on date, Category, and Year text with some interpolation syntax.  
 ![Angular app](images/input3.png)  
 Looking at this in the browser, we can see the mediaItem data rendered within the mediaItem content.  
-The Input decorator supports passing in an alias name in the parentheses if you wish to expose the property name for use to be something different than the class property name. For example, we could switch over to the media-item.component.ts file and add the string literal mediaItemToWatch into the Input decorator parentheses,  
-![Angular app](images/input3.png)  
-
+*Note*: The Input decorator supports passing in an alias name in the parentheses if you wish to expose the property name for use to be something different than the class property name. For example, we could switch over to the media-item.component.ts file and add the string literal mediaItemToWatch into the Input decorator parentheses,  
+![Angular app](images/input4.png)  
 and then switch over to the app.component.html file where we are using it and update the property name to be mediaItemToWatch instead of mediaItem in the binding target. *Now, even though Angular supports this name alias, it is a recommended practice to avoid using that approach by default*.  
+
+
+###  Selecting transcript lines in this section will navigate to timestamp in the video  
+Angular has an output decorator that allows you to expose event bindings on components. We can update the media item component and make use of the output decorator to provide notifications of a delete request. Using output is similar to how you use input.  
+- First we need to import the output decorator from the @angular/core scoped package.  
+- Then we can use the output decorator to decorate a property on the component class, that we can name "delete."  
+![Angular app](images/output.png)  
+*The difference with output is we want to set the property to an EventEmitter object*.  
+- To do that, we need to import the *EventEmitter*, which also comes from the @angular/core scoped package.  
+- And then back down at the new property, we can set that equal to a new EventEmitter.  
+![Angular app](images/output1.png)  
+Like the input decorator, the output decorator allows you to pass in a string value if you want to alias the property. But again, *it is recommended you only use the alias if you run into a case where you need it*. So we will stick with the property name of "delete" here.   
+
+
+
+What we are doing here is exposing an event that can be subscribed to on our custom component, just like native DOM events. But to emit the delete event, we need to have something happen.   
+![Angular app](images/output2.png)  
+And with that, the media item component is now wired up with an output for a delete event, using the output decorator.  
+- The last thing we need to do is to head over to the app component, where we are using the media item component, and make use of the event.  
+So over in the app.component.html file, we can add the delete event binding to the mw-media-item element. Create a call to an onMediaItemDelete method. And since this emit callback in the media item component was being called with the media item as an argument, we can make use of a key term, $event, in the statement, to get access to that value.  
+So this is us in the app component telling Angular, "Hey, when this media item component emits its delete event, we want to respond to that by calling the app component onMediaItemDelete method."  
+![Angular app](images/output3.png)  
+- One last thing. We need to flip over to the app.component.ts file, and add our ```onMediaItemDelete``` method. We know that the event from the media item component will return us a media item object, so we can add a parameter named mediaItem to the signature. Here you can fill out this method with the logic to delete a media item.  
+![Angular app](images/output3.png)  
+
+
+
 
 
 
