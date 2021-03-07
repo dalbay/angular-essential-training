@@ -42,32 +42,38 @@ The NgModule decorator takes in an object with some known properties to configur
 
 - The **_imports_** property is used to bring in other Angular modules that your module will need.
 - The **_declarations_** property is used to make components, directives, and pipes available to your module that don't come from another module.
-- The **_bootstrap_** property is used for a root module and will let Angular know which component or components will be the starting point for the bootstrap process. Basically, the entry point for your app code.
-
-```JavaScript
+- The **_bootstrap_** property is used for a root module and will let Angular know which component or components will be the starting point for the bootstrap process. Basically, the entry point for your app code.  
+- So from here, you follow it up with a class definition for the Angular module. Since this is going to be our app route module, let's name it **AppModule**. So we type class space AppModule and that up with a pair of curly braces. Since we are building this module in its own file and we want to import into another file, we need to provide support for using the module loading syntax. You do this by using the export keyword in front of the class keyword.  
+```TypeScript
 @NgModule({
   imports: [],
   declarations: [],
   bootstrap: []
 })
 export class AppModule {}
-```
+```  
+- Since we are building a browser-based app, we want to make use of the **_browser module_** that the Angular platform has available.The browser module contains core directives, pipes, and more for working with the DOM, and can be found in the platform browser scoped package. Import the browser module and add the browser module to the array for the imports metadata property.
 
-- Use of the **_browser module_** that the Angular platform has available. The browser module contains core directives, pipes, and more for working with the DOM, and can be found in the platform browser scoped package. Import the browser module and add the browser module to the array for the imports metadata property.
-
-```JavaScript
+```TypeScript
 import { BrowserModule } from "@angular/platform-browser";
-```
+```  
+```TypeScript
+@NgModule({
+  imports: [BrowserModule],
+  declarations: [],
+  bootstrap: []
+})
+```  
 
 - Our app is going to need a starting component - AppComponent (will be created later - this file will be located right next to the app.module.ts file. Import this component and add the app component to the declarations property, as it is a component that we want to make available to the Angular module.
 
-```JavaScript
+```TypeScript
 import { AppComponent } from "./app.component";
 ```
 
 - Finally, we need to add the app component to the bootstrap property as well. Since this app module is being used as the root module, Angular will use the app component as a target for bootstrapping the app.
 
-```JavaScript
+```TypeScript
 @NgModule({
   imports: [BrowserModule],
   declarations: [AppComponent],
@@ -79,11 +85,9 @@ import { AppComponent } from "./app.component";
 
 ### Component metadata
 
-- Building the first component (the app component). app -> app.component.ts
-- To build an angular component:
-  - use the **_component decorator_** which comes from the core scope package in angular;
-  - import the component and call the decorator, using the app component syntax with the parentheses.
-  - export a class for the component.  
+- Building the first component (the app component). app -> app.component.ts  
+  ![ANGULAR components img 2](/images/appcomponent.png)
+- To build an angular component - import the component and use the **_component decorator_**; - export a class for the component.  
 - The component decorator takes in a ***metadata object*** with some known properties to configure the class you decorate as an angular component.
 - To decorate a component, you need to provide two metadata properties at a minimum.
   - **Selector** - is what angular will use to locate a custom html element and apply the component to.
@@ -102,35 +106,40 @@ export class AppComponent {}
 
 ### Bootstrapping the module for the browser
 - After creating a root module and a starting component, Bootstrap the module.
-- Put the bootstrap logic in a separate file - Main.ts in the app folder.
+- Put the bootstrap logic in a separate file - Main.ts inside the app folder.
 Angular has support for running on multiple platforms. For this app we are targeting the browser so we need to bootstrap for that platform. 
-- Angular exports a function named ***Platform Browser Dynamic*** that can be used for targeting the browser and that comes from the platform-Browser-Dynamic scope package. So we can import the platform-Browser-Dynamic function from there.
+- Angular exports a function named ***```platformBrowserDynamic```*** that can be used for targeting the browser and that comes from the platform-Browser-Dynamic scope package. So we can import the platform-Browser-Dynamic function from there.
 ```JavaScript
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 ```  
 - This function returns a platform object that has a bootstrap module function on it. That is the function you will use to bootstrap your root module on the platform.  
-This function is expecting a root module and we have one already created from earlier named App Module import it and pass the app module type into the bootstrap module function call.
+This function is expecting a root module and we have one already created from earlier named AppModule import it and pass the app module type into the bootstrap module function call.  
  ```JavaScript
-import { AppModule } from './app/app.module';
-
-platformBrowserDynamic().bootstrapModule(AppModule);
+ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+ import { AppModule } from './app/app.module';
+ 
+ platformBrowserDynamic().bootstrapModule(AppModule);
  ```  
-- And with that we have all the initial starting bits written to get this Angular app up and running in the browser. 
+- And with that we have all the initial starting bits written to get this Angular app up and running in the browser.  
+  Let's open up a command line or terminal. I'll do that from within Visual Studio code here using the keyboard shortcut of control plus the tilde key to open up the terminal and I'll run the ```ngServe command``` from the Angular CLI to build and serve the application in watch mode where any changes made to the files in the application will trigger a rebuild and a refresh of the browser window automatically.  
+  And over in the browser, we can see the content from the app component template is displayed.  
+  
 ![Angular app](images/angular10.png)
 <br/>  
 
 ###  The Component Selector  
+Angular will use the selector property from the component metadata to find a match in the Dom based on an element name.  
 ***Recap:***  
-- Angular kicks off with the bootstrap call in the main.ts file, that takes in an Angular root module ```platformBrowserDynamic().bootstrapModule(AppModule);```.  
-***main.ts file*** -
+- Angular kicks off with the bootstrap call in the main.ts file, that takes in an Angular root module -  ```(AppModule)```.  
+  *main.ts file:*  
 ```JavaScript
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { AppModule } from "./app/app.module";
 
 platformBrowserDynamic().bootstrapModule(AppModule);
 ```  
-- And in the app.module.ts file, that contains a list of components ```bootstrap: [AppComponent]```to use as the starting component.  
-***app.module.ts file*** -
+- And in the app.module.ts file, are a list of components to use as the starting component - ```bootstrap: [AppComponent]```.  
+  *app.module.ts file:*  
 ```JavaScript
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
@@ -143,8 +152,8 @@ import { AppComponent } from "./app.component";
 })
 export class AppModule {}
 ```
-- In the components file (app.components.ts), Angular will use the selector property ```selector: "app-root",``` from the component metadata to find a match in the DOM (index.html), based on an element name ```<app-root></app-root>```.  
-***app.component.ts*** -
+- For Example: In the components file (app.components.ts), Angular will use the selector property ```selector: "app-root",``` from the component metadata to find a match in the DOM (index.html), based on an element name ```<app-root></app-root>```.  
+  *app.component.ts:*  
 ```JavaScript
 import { Component } from "@angular/core";
 
@@ -157,6 +166,51 @@ export class AppComponent {}
 - Angular will bootstrap the AppComponent to that element.
 The W3C spec states that custom DOM elements should use at least one dash in their names.  
 <br/>
+
+###  The component template  
+When angular finds a match in the Dom for a component selector, it will render the component markup into that Dom element that it found a match on. The markup it will inject comes from the component metadata template properties. There are two options for this; template or template URL.  
+This is an inline template. The markup is declared within the component metadata.  
+![Angular app](images/inlinetemplate.png)  
+The other metadata property we can use is the template URL. This property allows us to specify a file that contains the template content. Angular will load that template file for us and do the same content rendering. We can create a new file named app dot component dot HTML in the app folder to hold the template.  
+![Angular app](images/appcomponenthtml.png)  
+Then we can go back to the app.component.ts file and change the template property to be **templateURL**. And set that equal to the relative path to the app.component.html file we just created.  
+![Angular app](images/appcomponenthtml1.png)  
+
+###  Styling a component  
+
+We have the app component with its metadata configured for the selector and the template URL. Let's see what we can do about giving it some style. Angular provides support for styling a component via the component metadata in two ways similar to how templates work. We can use either the **styles** property, or the **styleUrls**s property, both take an array of string values.
+![Angular app](images/appstyling.png)  
+
+###  Using other components in a component  
+Add a new component named media-item.component.ts. This thing will be used to display the details of a media item and we want to use it from within the app component. If we take a look at this new file, we can see the import and component decorator along with the component metadata object literal we have learned about to this point.  
+Let's get this added to the app module so it knows it is available for use in other templates.  
+![Angular app](images/mediaitem.png)  
+Over in the **app.module.ts** file where we have the AppModule class, we want to add the new media item component to the declarations and metadata property.  
+- first add the import statement for that.  
+- then add the media item component to the declarations array.  
+  ![Angular app](images/mediacomponent.png)  
+- Now we can switch over to the app.component.html and add a DOM element named mw-media-item element.  
+  ![Angular app](images/mediacomponent1.png)  
+If we head over to the browser, we can see that the media-item component is rendering. And if we inspect the source for the DOM, we can see that the media item component template markup has been rendered inside of the mw-media-item element.  
+
+
+###  Interpolation and the expression context  
+Interpolation is a way to get data displayed in the view.  
+You do Interpolation by using a pair of matching curly braces in the markup. And the contents of the double curly braces is a JavaScript like expression that Angular will evaluate and then convert to a string. So we can add a pair of curly braces in the h tag for the media item name and put an expression like 10 + 5, and see in the browser that Angular evaluates that to 15 and renders it as a string of content in our h tag.  
+But not all expressions are supported. Assignments, newing up variables, expressions that are chained, and incrementors and decrementors are not valid template expressions.  
+*EXAMPLE:*- add a class property and assign it a string value; add a method wasWatched() and have it return true. Flip over to the template file and use the property and method inside html tags with curly braces.  
+![Angular app](images/interpolation.png)  
+```HTML
+	<h2>{{ name }}</h2>
+	<div>{{ wasWatched }}</div>
+```  
+Here in the browser we see what is being rendered:  
+![Angular app](images/interpolation1.png)  
+
+
+
+
+
 
 
 
