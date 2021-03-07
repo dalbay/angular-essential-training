@@ -207,7 +207,30 @@ But not all expressions are supported. Assignments, newing up variables, express
 Here in the browser we see what is being rendered:  
 ![Angular app](images/interpolation1.png)  
 
+###  Property binding  
+Another way you can bind data in templates with Angular is through property binding. HTML elements have backing DOM properties that track state on elements. You can use Angular's property binding syntax to wire into those properties.  
+![Angular app](images/databinding.png)  
 
+###  Event binding  
+The event binding templates syntax in Angular allows you to wire up event handlers from within your component templates. You can wire up native Dom element events, as well as custom events you create for your components to emit.  
+Notice that we use the term click here and not on click. Angular has a pattern for native Dom events where it is looking for the event name without the on.  
+![Angular app](images/eventbinding.png)  
+![Angular app](images/eventbinding1.png)  
+
+###  Getting data to the component with @Input  
+
+You can define properties for components you create and make them available to be set via the property binding syntax by using an Angular decorator named Input. Let's refactor the MediaItemComponent to move away from the static content and support sending it a media item to display.  
+- We start with the media-item.component.ts file. We need to import the Input decorator to use it. This comes from the angular/core scoped package.  
+- The Input decorator is designed to be used on a class property. Let's create a new class property on the MediaItemComponent class named mediaItem, and we'll decorate it with the Input decorator, placing the @Input with the parentheses in front of the property. This will tell Angular that we want it to support any property bindings placed on instances of the mw-media-item elements where the property name is mediaItem.  
+![Angular app](images/input.png)  
+
+
+Let's switch over to the app.component.ts file and make use of the new Input property. Update the AppComponent class to give it a firstMediaItem property set to an object literal with some sample data. We want to send this to the mw-media-item element.  
+![Angular app](images/input1.png)  
+
+
+
+Switch over to the app.component.html file. And in here, we can use the property binding syntax with our Input name from the MediaItemComponent. We use the square brackets and add mediaItem, and then we set that equal to the AppComponent property of firstMediaItem. In this syntax, the mediaItem, which is the Input property from the MediaItemComponent, is the binding target because it is on the left of the equal sign. The first mediaItem property from the AppComponent is the binding source, which is to the right of the equal sign. When Angular parses the property syntax in a template, it is going to find either a match on a known DOM property name for an element or a property decorated by the Input decorator on a component or directive that applies to that element. The DOM has built in properties on existing elements. Components you create do not. That is why the Input decorator is used to give components properties that you want to expose for use when using the component. Now, if we flip over to the media-item-component.hmtl file, we can replace the static Name, Watched on date, Category, and Year text with some interpolation syntax using the mediaItem.name, mediaItem.watchedOn, mediaItem.category, and mediaItem.year binding sources. Looking at this in the browser, we can see the mediaItem data rendered within the mediaItem content. The Input decorator supports passing in an alias name in the parentheses if you wish to expose the property name for use to be something different than the class property name. For example, we could switch over to the media-item.component.ts file and add the string literal mediaItemToWatch into the Input decorator parentheses, and then switch over to the app.component.html file where we are using it and update the property name to be mediaItemToWatch instead of mediaItem in the binding target. This alias only affects the property name that is exposed for use by other components. The property on the MediaItemComponent class remain the same, so we don't need to update its template markup because its execution context still knows it as mediaItem. The Input decorator is just telling Angular, "Hey, "when you find a property binding with this name, "map it to my component property of this other name. "Or if I don't give you an alias, "just use my component property name." Now, even though Angular supports this name alias, it is a recommended practice to avoid using that approach by default. Think of it more as a way to solve scenarios that arise and try and just use the class property name instead. So let's change this property back to mediaItem in the template and remove the alias back in the media-item.component.ts file from the Input decorator.
 
 
 
