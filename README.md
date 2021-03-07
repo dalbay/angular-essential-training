@@ -303,7 +303,7 @@ Attribute directives are designed to change the appearance or behavior of the DO
 
 This attribute directive will handle setting a class on the media item element. If it has been set to a favorite or not.
 - Create a new file inside the app folder named favorite.directive.ts And in there we bring in the directive decorator with an import statement from the angular core scoped package.  
-- Then we use the @directive decorator and pass it in object literal for the directive metadata. The selector value is going to be ```M[myFavorite]```.  
+- Then we use the @directive decorator and pass it in object literal for the directive metadata. The selector value is going to be ```[myFavorite]```.  
 - we need to export a class named ```FavoriteDirective```.  
 - To get a class applied to the host element that the directive is on, use another angular decorator called host binding and is found in the angular core scoped package. So we add host binding to the import statement.  
 - Host binding is used to bind a host element property to a directive property. So inside of the director of class definition, we add ```@HostBinding()```; and  nside of the parentheses we put ```@HostBinding('Class.is-favorite')```. Name ```@HostBinding('Class.is-favorite')``` and initialize that to ```true``` for now. So the host binding decorator is configuring.  
@@ -316,9 +316,72 @@ This attribute directive will handle setting a class on the media item element. 
   ![Angular app](images/attribute5.png)  
 
 
+###  Using directive values  
 
+Here's how you can make your custom directive support input values from the directive property that matches the directive selector on the host element.  
+- wrap the MW favorite with brackets to let Angular know we want to do the binding here; and set the directive property to ```mediaitem.isfavorite```.  
+  ![Angular app](images/directive.png)  
+
+- let's switch over to the favorite.directive.ts file. And, in here, we need to add the input type into the import statement for the Angular core scoped package.  
+- This time around, let's checkout another way you can use the input decorator.  
+  You can also use it to decorate a class setter method. Now, a setter method is a way of defining a method that will be called when a property with the same name is set to a value from an instance of the class. A setter method will get past a value so we can add a parameter named value here. Based on this code, Angular will match a property binding with the name mwFavorite, evaluate the statement that it is set to and pass the result of that statement into this setter method.  
+  ![Angular app](images/directive1.png)  
+- And if we switch over to the browser, we can inspect the media items and see that some get the class is favorite and some don't, based on their mediaitem.isfavorite data property.
+  ![Angular app](images/directive1.png)  
+
+
+###  Working with events in directives  
+Directives can not only handle changing host element properties via host bindings, but they can also be set up to respond to host element events via host listeners.  
+- over in the favorite.directive.ts file, Let's add some hosts listeners to toggle on and off a CSS class, ```is-favorite-hovering```.  
+Angular provides another decorator for handling wiring up to host element events. The **host listener decorator**.  
+- Host listener is found in the angular core scoped package; add that to the import statement.  
+- add another host binding for the ```is-favorite-hovering``` CSS class; and let's use add a property named hovering, setting it to a default value of false.  
+- We will toggle this value from mouse hover events to handle adding or removing the CSS class. Okay, let's add some host listeners. We want to listen for the on mouse inter event on the host element.  
+- We also want to listen for on mouse leave. So we add another host listener decorator passing it mouse leave. And decorate a function that we can name on mouse leave. And in this function, we set this dot hovering to false.  
+  ![Angular app](images/events.png)  
+- Then over in our browser, we can inspect the media item and then mouse-over and off of the favorite icon and see the class getting applied and removed.
+  ![Angular app](images/events.png)  
+
+###  Angular pipes: Built-in  
+An Angular Pipe is a template expression operator that does display value transformations. They are designed to be used in interpolation syntax and template statements within component template markup. The general idea being that you use a pipe after your statement that you wish to transform And the pipe will run on that statement value and return a final value that the template will display. 
+- Let's see how we can use the Angular date pipe to format a display - use the pipe template expression operator after the mediaItem.watchedOn statement and follow the pipe with the term date.  
+  ![Angular app](images/pipe.png)  
+If we switch over to the browser, we can see the date value is now formatted.  
+  ![Angular app](images/events.png)  
+Here the date pipe is expecting a string parameter.    
+  ![Angular app](images/pipe1.png)  
+  You separate each parameter by a colon.  
+  ![Angular app](images/pipe2.png)  
+  Pipes can also be chained.  
+  ![Angular app](images/pipe3.png)  
+Let's go back to the code and add the slice pipe to the mediaItem.name output and use it to only show a max length of characters. The slice pipe takes a start position and a length. So we pipe mediaItem.name into slice and then add a colon and then the number 0, then another colon and the number 10. Over in the browser, we see the longer names have been truncated. Pipes can also be chained. Back in the code, let's add the uppercase pipe to the mediaItem.name output. So this is sending name into slice and slice is returning a transformed value which is then sent to uppercase, which returns the final value to the interpolation statement. Over in the browser, we can see the results. Let's go back to the code and do some final plumbing. And just remove the pipes on the name now that we've seen how we can chain them. 
+
+
+
+###  Angular pipes: Custom  
+
+Let's build a custom pipe for the application that will display a list of all the unique media item categories for the media items currently displayed on the screen.   
+- We start by creating a new file named category-list.pipe.ts in the app folder.  
+- We need to use the pipe decorator which is in the Angular core scoped package.  
+- Add the pipe decorator - accepts an object of metadata - name and pure
+- add export class CategoryListPipe.  
+- Next we need to implement a transform method. We can make use of a TypeScript interface here to help enforce this usage. The pipe transform interface. Let's import that from Angular core as well. 
+- And then we can use the key word implement after the class name and then a space and then the pipe transform interface.  
+- With that in place, we can create a class method named ```transform```; add a parameter named mediaItems. The parameter name can be whatever we want. Only the method name has to be what Angular is expecting.  
+- Okay, now we can fill out the logic of the transform method.  
+  We want to get all the distinct category names across all media items passed in.  
+  ![Angular app](images/pipecustom.png)  
+- Okay, let's use the new pipe we created. In the media-item-list.component.html file, let's add a header element. And in there, let's add a div with the interpolation syntax of double curly braces mediaItems. Then add the pipe character, followed by the name we use for the category list pipe decorator metadata, categoryList.  
+  ![Angular app](images/pipecustom1.png)     
+- The last step we need to do, is tell Angular to add our custom pipe to the app.module.ts. - add an import statement to bring in the ```CategoryListPipe``` type. And then add the type to the declaration's metadata property array.  
+  ![Angular app](images/pipecustom2.png)  
+Now, if we head over to the browser, we can see the list of unique categories rendered from the custom pipe.  
+  ![Angular app](images/pipecustom2.png)  
   
-  
+
+
+
+
 
 
 Components are actually directives with a template. _Directives provide functionality and can transform the DOM._
