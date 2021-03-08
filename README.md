@@ -376,104 +376,120 @@ Let's build a custom pipe for the application that will display a list of all th
 - The last step we need to do, is tell Angular to add our custom pipe to the app.module.ts. - add an import statement to bring in the ```CategoryListPipe``` type. And then add the type to the declaration's metadata property array.  
   ![Angular app](images/pipecustom2.png)  
 Now, if we head over to the browser, we can see the list of unique categories rendered from the custom pipe.  
-  ![Angular app](images/pipecustom2.png)  
+  ![Angular app](images/pipecustom3.png)  
   
 
 
+##  Forms
+###  Angular forms  
+
+There are two common approaches to building forms in Angular: **template driven**, where the majority of the form logic is crafted in the template markup, and **model driven**, where the majority of the form logic is crafted in the component class.  
+
+###  Template-driven forms  
+
+To make use of the forms module, you need to add it to the list of imports for your angular module. In the app.module.ts file, we can add a new import statement and bring in the forms module from the angular forms scoped package. Then we can add the forms module to the imports metadata property array.  
+  ![Angular app](images/forms.png)  
+
+- Set up a new component -  immediate-item-form.components 
+- wire up the app module and app component.
+- switch over to the media-item-form.component.html file. In angular the template driven approach to building forms makes use of the template syntax to build form interactions all within your template markup.  
+  - With the forms module included in the app angular is going to be on the lookout for any form elements in your templates. It does this through the builtin ```ngModel``` directive which has form as part of its selector value. But you do need to tell it what fields are going to be part of the form.  
+  - On the medium HTML select element, lets add the directive NG model.  
+  - On the form element, add an event binding using the parentheses around NG submit and set it equal to a function call that we will create of on submit.  
+  - On the form element, to capture a handle to this form that angular creates, use the hash and a name we want and pass in the value of the form to the on submit method, by using media item form.value.  
+  ![Angular app](images/forms1.png)  
+- And then over in the media-item-form.component.ts file, we can add the on submit method, naming the parameter media item.  
+  ![Angular app](images/forms2.png)  
+  - go back to the template file, and add in the rest of the ngModel directives on the other form fields. And then switching back to the browser, we can fill out the form fields with some test data, then we can submit, and see the form model has the data structure we want.
+  ![Angular app](images/forms3.png)  
+- And then switching back to the browser, we can fill out the form fields with some test data, then we can submit, and see the form model has the data structure we want.  
+  ![Angular app](images/forms4.png)  
+
+
+###  Model-driven forms  
+
+The model-driven or reactive approach is another way to handle building forms in Angular. The difference is the form is built in the component class. That allows you to have a contract that your form needs to adhere to, the ability to set up validation rules, subscribed to field value changes and ultimately unit tests your form logic without any UI layer.  
+
+- model-driven forms are built using the ReactiveForms module instead of the FormsModule. We need to update the app module to import and use that instead of FormsModule.  
+  ![Angular app](images/module.png)  
+- in the media-item-form.component.ts file, we are going to create a FormGroup object that represents the form - import ```{ FormGroup }```.
+- We need a class property for the form. So let's add that naming it form. We can also use some TypeScript here to declare the type by adding a colon, then the FormGroup type then a semi-colon.  
+- Next initialize the form property to a new form group. We will do this in an Angular lifecycle method called ```ngOnInit```. While we could put this in the constructor, it is preferable to use the lifecycle events because it makes the code easier to unit test.  
+  - add ```OnInit``` to the import statement from Angular core  
+  - then add ```implements OnInit``` after the class name.  
+  - Then we can add an ```ngOnInit``` method.  
+  - And in the function body we set ```this.form = new FormGroup();```.  
+  FormGroup expects to be called with an object structure that has properties named for the controls that will be in the group set to a value of a new control.  
+  - import ```FormControl```. so we can new up some controls.  
+  - And then in the parentheses for FormGroup recreate an object literal and we set up the form fields as property names and setting their value equal to a new FormControl object. FormControl can take in a default value as the first argument call. So we can set the medium to default to movies and set the rest of the default to empty strings.  
+  ![Angular app](images/module1.png)  
+- flip over to the media-item-form.component.html file and tell Angular that we have a model for the form - ```[formGroup]="form"```.
+-  And then in the onSubnit call we can call .value of form instead - ```(ngSubmit)="onSubmit(form.value)"```.
+- wire up the form fields to the appropriate controls from the formGroup.  
+  ![Angular app](images/module2.png)  
+With all those wired up, if we head over to the browser we can see that the form has a default value for medium of movies like we configured and if we fill out the form we see the same expected behavior in the console log.  
+
+
+###  Validation: Built-in  
+- We add ```Validators``` to the import list at the top
+- and down in the new form group method object we can set validators on the form controls.  
+  ![Angular app](images/validation1.png)  
+And we can switch to the browser, give the name field a value with an invalid pattern and if we inspect the name field in the dev tools, we can see that Angular is applying a CSS class named **ng-invalid** or **ng-valid**. When you add multiple validation rules to a control, use ```Validators.compose```and add the validation rules in the array; otherwise, just add the validation rule to the control.  
+The form is still submitting even if invalid. Angular will track the state of your form but it is up to you to check that before you do your submit logic. Switching back to the code, over in the media-item-form.component.html file, the form model we have set up has a .valid property on it. So down in the submit button, we can add a property binding for the disabled native element property and set that equal to ```!form.valid```. This will disable the submit button when the form does not pass validation.  
+  ![Angular app](images/validation.png)  
+If we switch over to the browser, we can see the save button in a disabled state because name is empty  
+  ![Angular app](images/validation2.png)  
+  
+  
+  
+
+###  Validation: Custom  
+To build your own custom validators, you need to create a function that will receive an object, which angular will pass in as either a form control, form group or form array. And that function needs to return no invalid and return an object if invalid.  
+Okay, the final thing we need to do is add this dot year validator to the form control instantiation for the year. So for the second argument in the new form control call, we set ```this.yearYalidator```. Note we don't use parentheses here because we want to pass the function reference instead of making a function call. Note that the year field can be empty, but will be invalid only if an invalid year is entered.  
+  ![Angular app](images/validation3.png)  
+
+###  Error handling  
+
+  ![Angular app](images/error.png)  
+  ![Angular app](images/error1.png)  
+  ![Angular app](images/error2.png)  
+  ![Angular app](images/error3.png)  
+  
+  Back in the component class, the year validator code is in control of returning the object that gets put on the year.errors property. so we can actually update it to contain the range values the validator is checking on. We can change ```true``` to an object that has min and max properties set to the min and max year values.  
+  ![Angular app](images/error4.png)   
+  We can then go over to the component HTML. and instead of using ```hasError```, we can check the error's property on the form control. If there are any errors, this property will be an object. If not, it will be null. So we can update the ngIf statement to be ```form.get ('year').errors``` and we can grab a handle to that errors object so we can use it in our template to show those min and max values by using the ```as``` syntax in the ngIf statement. With this in place in the markup, we can add some interpolation in the error message to show the year.min and year.max values.  
+  ![Angular app](images/error5.png)   
+
+
+###  How Angular does dependency injection  
+
+With dependency injection, the framework is handling creating instances of things and injecting them into places where they are needed. In Angular, this is handled in two steps:  
+ - *service registration* - in which you provide angular with a list of things you want it to know about that can be injected.  
+ - *retrieval of those things*, which can be done with constructor injection, either by leveraging TypeScript type annotations or by using the Angular Inject decorator.  
+
+So step one is to tell Angular, hey, I have this class or this value that I want you to handle for me. This is done with the *Angular Provider class*, or the *provide helper function*, or even by *providing the type*. You let angular know either at the bootstrap call or in the component directive metadata in the decorators.  
+Step two is to tell Angular from within class constructor signatures, hey, I want these constructor parameters to be of this type. This is done with a bit of TypeScript, or can be done with the Inject decorator. From there, Angular takes over.  
+
+###  Class constructor injection  
+
+Let's refactor the media item form component class to use the form builder class to help in the creation of the form model to see constructor injection in action.  
+  ![Angular app](images/formBuilder.png)  
+Not only did we do some constructor injection here, but we also brought in a service instance to help us build the form allowing us to remove the instantiation calls from within our component. This ultimately leads to better decoupled code and is one of the big benefits of dependency injection and inversion of control.  
+
+###  Building and providing a service  
+- create a service class for the MediaItems. We start by creating a new media-item.service.ts file in the app folder.  
+- Since we are planning to use this service elsewhere we need to export the class.   
+- add the list of MediaItems into it.  
+  ![Angular app](images/service.png)  
+- add some methods to work with this data. So let's add a get, add and delete method.  
+  ![Angular app](images/service1.png)  
+- With the service built we need to let the AppModule know that it is available - in the app.module.ts file add the import statement.  
+  ![Angular app](images/service2.png)  
+- To make services available to the angular modules, you need to provide them. The NgModule Metadata has support for a property named providers.  
+  ![Angular app](images/service3.png)  
 
 
 
 
-Components are actually directives with a template. _Directives provide functionality and can transform the DOM._
 
-- Structural Directives - modify layout by altering elements in the DOM.
-- Attribute directives - change the behavior or appearance of an existing DOM element.  
-  You can applying directives to an existing element, or a template element, to change that element in some way.  
-  ![ANGULAR components img 2](/images/angular5.png)  
-  Like a component, a directive gets configured with a selector that Angular will use to find a match and apply the directive.  
-  You apply a directive in different ways. You can write an attribute on an element that matches your selector,  
-  or you can use the template syntax to add a directive and an assignment statement.  
-  ![ANGULAR components img 2](/images/angular6.png)  
-  In addition to creating your own directives Angular comes with a number of directives out of the box to handle common web app constructs by conditionally rendering elements based on some expression1(`ngIf`), looping out items to render(`ngFor`), or even for things like router links (`routerLink`).
 
-#### Pipe
-
-Another tool in the Angular toolbox to display content is the pipe. A **_pipe_** takes in data, like a string or an array, and runs some logic to transform it to a new output.  
-Angular comes with some common pipes like date, and uppercase and lowercase.  
-You can also write your own pipes.  
-_Pipes are a great way to change data in a reusable way without having to imbed the transformed logic within component classes. And without having to modify the data just for display purposes_.
-
-### Data Binding
-
-- You can bind data to views and work with data in those views via **_interpolation_**, - `<h1>{{ movie.title}}</h1>`.
-- You can also use directives to help display data. Use the **_template syntax_** in Angular to work with data in views.  
-  You can wire up click events to DOM elements that modify data that you've displayed elsewhere and Angular will handle the update of that data visually.
-
-There are many elements to the template syntax.
-
-- interpolation and built-in directives
-- constructs and patterns
-  - Template expressions and statements
-  - Value binding - binding syntax for property, attribute, class, and style bindings
-  - Event binding
-  - Template expression operators.
-
-You can also create and use local template variables created in markup using the hash to get a reference to the element and then use that from any sibling or child element in the view.
-
-This allows you to wire up simple interactions or display related data from within your markup without needing to write any script code.  
-![ANGULAR components img 2](/images/angular7.png)
-
-- Now when it comes to collecting data from the user, Angular has a form module loaded with directives and services for helping you build HTML forms.  
-  It provides:
-  - data binding for both setting and getting data
-  - change tracking
-  - validation
-  - error handling
-
-### Dependency injection
-
-- Angular brings dependency injection to JavaScript.
-- **_Dependency injection (DI)_** is the concept of _inversion of control (IoC)_, where you architect code in a way that you provide modules with other modules it needs to get some work done.
-- DI allows you to write decoupled code that is easier to unit test and to work with.
-  ![ANGULAR components img 2](/images/angular8.png)
-- You can write modular components, and services and tell Angular what/where you want to use them.
-  ![ANGULAR components img 2](/images/angular9.png)
-- The most common place you use DI is in your class constructors.
-  - components
-  - directives
-  - pipes
-  - services
-- You can declare types on your constructor parameters with TypeScript.
-- You can also leverage DI through
-  - component metadata,
-  - properties, for directives and providers.
-- You can even do some DI at the bootstrap phase of an Angular app, setting up your dependency graph when your app starts up, and getting that delivered through all aspects of your app.
-- You can replace a dependency at any phase of application code.
-
-### Services and other Business Logic
-
-- _Services in Angular are more of an implied pattern_. A JavaScript class or function that is encapsulated is refered to as a service in Angular.
-- Put application business logic in services.  
-  **_Example:_**  
-  You can write a JavaScript class that handles finding the record data and returning it as an object. This would be a service. And then, using Angular's DI framework, you can specify that a component is going to use this service. And from within the component logic, you can request the a data record from your service and make it available to your view template.
-- These services that you write can also leverage DI, so you can create constructors and specify parameter types, with the help of some TypeScript, and Angular will provide your service instance with the appropriate dependencies.
-
-### Data Persistence
-
-Persist data from JavaScript in the client is handled in a couple of different ways with Angular
-
-1. In-Memory Data Store - storing data for the time in which the user is using your application, you could store that data in memory.
-   Create a JavaScript class or object to store your data, provide it to your app as something that can be injected in, and then do constructor injection where needed to bring in the instance of that object.
-2. Local Storage Service - Write your own JavaScript code to do so and then use it with the services pattern, leveraging Angular's dependency injection to work with it throughout your application.
-3. Data Store Service - One way you can persist data to and from an API is by leveraging the HTTP protocol. You can do this in two ways. One, by using the XML HTTP request, or XHR, and the other by using JSONP. Angular provides an HTTP module in the framework for abstracting out working with the way XHR and JSONP calls are done via client script.
-
-### Routing
-
-Angular provides a router module that handles routing on the client and adjusts the UI and data displayed accordingly.
-This Router Module supports:
-
-- Route configuration to components, route params to have variables in the URL;
-- Routing links - a directive for working with links that do routing;
-- Router outlets - a dircetive for specifying where in a template the routed component will display, creating child routes;
-- Routing events - rougting lifecycle hooks for responding routing events;
-- It also handles history state, altering the way a browser handles it by default, so that back and forward actions by the user will result in Angular route changes.
