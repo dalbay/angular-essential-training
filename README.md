@@ -380,7 +380,8 @@ Now, if we head over to the browser, we can see the list of unique categories re
   
 
 
-##  Forms
+##  Forms  
+
 ###  Angular forms  
 
 There are two common approaches to building forms in Angular: **template driven**, where the majority of the form logic is crafted in the template markup, and **model driven**, where the majority of the form logic is crafted in the component class.  
@@ -473,7 +474,7 @@ Step two is to tell Angular from within class constructor signatures, hey, I wan
 ###  Class constructor injection  
 
 Let's refactor the media item form component class to use the form builder class to help in the creation of the form model to see constructor injection in action.  
-  ![Angular app](images/formBuilder.png)  
+  ![Angular app](images/formbuilder.png)  
 Not only did we do some constructor injection here, but we also brought in a service instance to help us build the form allowing us to remove the instantiation calls from within our component. This ultimately leads to better decoupled code and is one of the big benefits of dependency injection and inversion of control.  
 
 ###  Building and providing a service  
@@ -485,11 +486,75 @@ Not only did we do some constructor injection here, but we also brought in a ser
   ![Angular app](images/service1.png)  
 - With the service built we need to let the AppModule know that it is available - in the app.module.ts file add the import statement.  
   ![Angular app](images/service2.png)  
-- To make services available to the angular modules, you need to provide them. The NgModule Metadata has support for a property named providers.  
+- To make services available to the angular modules, you need to provide them. The NgModule Metadata has support for a property named **providers**.  
   ![Angular app](images/service3.png)  
+At this point we have just created a new service and provided it into the application. We have yet to make use of it.  
+
+
+###  Providing services in the root  
+The @module is our root NgModule for this application, meaning that is it the top level NG module. Registering that media item service in there was like registering it in the root injector. Angular has another way to wire up injectables to the root provider-- one that can be done without using the provider's meta data property for the NG module decorator.  
+The **@Injectable** decorator has a meta data property named **providedIn** that can be used to tell Angular where the decorated service should be registered at.  
+In the media-item.service.ts file, we can import the injectable decorator from @Angular/core. The we can decorate the media item service class with the @Injectable decorator, and pass it in an object literal with a property named providedIN, and set that to a string literal with a value of ```root```.  
+With this set, Angular will instantiate a single instance of this service in the root injector, and will provide it to any class that ask for it in the application.  
+  ![Angular app](images/providing.png)  
+Okay, now that we are telling Angular to register this media item service class at the root level, via the @Injectable provided in meta data property, we no longer need to include it in the provider's array in the NG module.  
+
+###  Using the service in components  
+
+Let's see how we can use the media item service from within a component.  
+- In the media-item-list.component.ts file, we want to create the import statement for the service.  
+- Then we need to create a constructor function so we can have Angular do constructor injection. We give that a private parameter named mediaItemService and set the type to MediaItemService.  
+- Then we can make use of the onInit lifecycle event by importing onInit from Angular Core and declaring that the class implements onInit.  
+- Then we can add an ngOnInit method and set the media items property of the component class equal to a call to this.mediaItemService.get.  
+- And now we can delete the sample data from here. This component class has the onMediaItemDelete function so we can fill out the body of that with a call to this.mediaItemService.delete and pass it in the media item it receives.  
+  ![Angular app](images/providing1.png)  
+- Finally, we can head over to the media-item-form.component.ts file then import the service at the top then
+- add it to the constructor parameters, setting it as private just like we did in the list component.  
+  ![Angular app](images/providing2.png)  
+- And now we can use it in the onSubmit method to add the media item through the add method of the service.  
+  ![Angular app](images/providing3.png)  
+So over in the browser, we see the list loaded and if we remove an item, we see the list change. And if we add an item we can see the list update as expected.
+
+
+###  The @Inject decorator  
+To get value types injected into constructors Angular needs a bit more help. Let's create a value provider for our app to store some lookup lists and provide them at Bootstrap.  
+- In the app.module.ts file, we can add a local variable named lookup lists and set it to an object literal, with a property for mediums.   
+
+To add the value to the provider, we need to add it to the list of providers in the module metadata. But to do that for a value provider we need to use a different syntax to add it to the providers array.  
+  ![Angular app](images/providers.png)  
+Let's use that in class constructors. Let's switch over to the media.item.form.component.ts file.  
+- We need to import the **inject decorator**. Similar to how you use some decorators to decorate class properties, *the Inject decorator is used to decorate function parameters*.  
+- add a new constructor parameter named, lookup lists - this tells Angular that we want it to pass in the lookup list token value object, into this constructor during constructor injection.  
+  ![Angular app](images/providers1.png)  
+- Now we can switch to the media-item-form.component.html file. And we can refactor the medium select options to use lookup lists in an ngFor directive on just one of the option elements.  
+- And we also need to update the option element to use the medium template input variable from the ngFor for the value property binding, as well as to display it in the template interpolation.  
+And with that, the medium form select field options are driven by the look-up list medium token provided in the injector at the root level.
+  ![Angular app](images/providers2.png)  
+
+
+###  Injection token  
+
+So the inject decorator, with its string literal works. But there's a better way to do this.  
+It's called an **injection token**. You can use an injection token, to tell angular you want to have a concrete type that can be passed around.  
+Let's refactor little lookup lists value type, to use an injection token.  
+- First, let's create a new file called providers.ts in the app folder.  
+- And we'll move the lookup list value instantiation, from the app.module.ts file, into this new file.  
+  The provider metadata property in the app module, is going to need this lookup list variable. So that's have the export keyword in front of the const statement, so that we can import it in the app module file.  
+- to create an injection token, we need to import the class type.  
+- Then we want to create a new variable to hold the injection token, and we want to export that.  
+  ![Angular app](images/token.png)  
+- Now we can switch back to the app.module.Ts file, and add an import statement to bring in the lookup list, token, token and the lookup list object.  
+- And then refactor the provide object to use lookup list token, instead of the string literal.  
+  ![Angular app](images/token1.png)  
+- And now we can go over to the media-item-form.component.Ts file, and add an import statement to bring in the lookup list token.  
+- And then refactor the inject decorator in the constructor, to use the token instead of the string literal.  
+  ![Angular app](images/token2.png)  
+Through the use of angulars injection token, we have eliminated the string literal token usage, and have a better solution for working with value type injection in our constructors.  
 
 
 
-
+##  HTTP  
+  
+###  The Angular HttpClient  
 
 
