@@ -552,9 +552,25 @@ Let's refactor little lookup lists value type, to use an injection token.
 Through the use of angulars injection token, we have eliminated the string literal token usage, and have a better solution for working with value type injection in our constructors.  
 
 
-
 ##  HTTP  
-  
-###  The Angular HttpClient  
+
+##  Routing  
+
+###  Setting the base href and configuring routes  
+
+- first omake sure you have a base href in the DOM. The router makes use of the browser's history push state for navigation and URL interaction. This essentially allows for URLs to be used in a client app without actually triggering a new remote request.  
+The client code can then work against those state changes and make decisions of how to route. To support push state, you need to have a base href element tag, as a child of the head tag in your HTML document.  
+In the index dot HTML file in this project, we can see that we have a base tag set ```<base href="/">```.  
+- the next thing we need to do is create some routes. Let's do that in a new file, named app.routing.ts, in the app folder.  
+- We create a new variable named app routes and set that equal to an array.  
+- import statement for that from the Angular router scoped package.  
+- A route object is expected to have a path property, so we add a new object literal to the array and give it a path property. The router handles building the URL, so you can use relative and absolute paths when navigating between application views.  
+  ```TypeScript
+  import { Routes } from '@angular/router';
+
+  const appRoutes = [{ path: 'add' }];
+  ```
+- Then we want to set up the component to use when this path has a match, for the add, we want to use the media item form component. The route object supports a component property that expects a type. So we need to import the media item form component type.  
+- And then we can add a component property onto the object and set that to media item form component.  
 
 
